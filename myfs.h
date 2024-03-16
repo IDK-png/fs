@@ -33,11 +33,16 @@ public:
 	};
 	typedef std::vector<struct dir_list_entry> dir_list;
 
+	/*
+	This function finds empty place in table for new Inode and returns the address
+	*/
 	int findEmptyTableAddress();
 
+	/*
+	This function finds empty place in datablocks section for a cerain size.
+	*/
 	int findEmptyDataAddress(int size);
 
-	int findInodeByNumber(int num);
 	/**
 	 * format method
 	 * This function discards the current content in the blockdevice and

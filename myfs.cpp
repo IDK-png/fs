@@ -88,12 +88,11 @@ void MyFs::create_file(std::string path_str, bool directory) {
 		type='f';
 	}
 	ROOT root = ROOT();
-	FileNode Inode = FileNode(round(EmptyAddress/20),0,EmptyDataAddress,type, ""); // short inode, int size, int address, char type
-	std::string Data = Inode.GetInode()+Inode.GetFsize()+Inode.GetDate()+Inode.GetAddress()+Inode.GetType();
+	FileNode Inode = FileNode(round(EmptyAddress/20),1,EmptyDataAddress,type, ""); // short inode, int size, int address, char type
 	//std::cout << Data << "    " << round(EmptyAddress/20) << std::endl;
 
-	//blkdevsim->write(EmptyDataAddress,0,""); 
-	blkdevsim->write(EmptyAddress,20,Data.c_str());
+	blkdevsim->write(EmptyDataAddress,1,"T"); // Putting placeholder in datablock address 
+	blkdevsim->write(EmptyAddress,20,Inode.GetInodeSection().c_str());
 	root.writeToFile(std::to_string(std::stoi(Inode.GetInode())) + " " + path_str);
 	//std::cout << root.returnTextByNumber(round(EmptyAddress/20)) << std::endl;
 	//std::cout << root.returnNumberByText(path_str) << std::endl;
@@ -117,8 +116,22 @@ std::string MyFs::get_content(std::string path_str) {
 }
 
 void MyFs::set_content(std::string path_str, std::string content) {
+	ROOT root = ROOT();
+	int InodeNumber = root.returnNumberByText(path_str);
+	if(InodeNumber!=0)
+	{
+		int EmptyDataAddress = findEmptyDataAddress(content.length());
+		char Inode[21];
 
-	throw std::runtime_error("not implemented");
+		blkdevsim->read(20*InodeNumber,20, Inode);
+
+		FileNode Node(Inode);
+		Node.SetAddress(EmptyDataAddress);
+		Node.SetFSize(content.length());
+		
+		blkdevsim->write(20*InodeNumber,20,Node.GetInodeSection().c_str());
+		blkdevsim->write(std::stoi(Node.GetAddress()), std::stoi(Node.GetFsize()),content.c_str());
+	}
 }
 
 MyFs::dir_list MyFs::list_dir(std::string path_str) {

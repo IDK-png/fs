@@ -21,6 +21,9 @@ std::string GetFsize();
 std::string GetDate();
 std::string GetAddress();
 std::string GetData();
+std::string GetInodeSection();
+void SetFSize(int);
+void SetAddress(int);
 char GetType();
 
 private:              // Docs                      | Example                 | Size(20 bytes)
@@ -32,6 +35,22 @@ private:              // Docs                      | Example                 | S
     char FType;       // File Type                 | F(File),D(Dir),E(Empty) | 1 bytes 
     std::string data; // Data of the file          | any text                | depends             
 };
+
+inline void FileNode::SetAddress(int newAddress)
+{
+    Address = newAddress;
+}
+
+inline void FileNode::SetFSize(int newSize)
+{
+    FSize = newSize;
+}
+
+inline std::string FileNode::GetInodeSection()
+{
+    std::string Data = this->GetInode()+this->GetFsize()+this->GetDate()+this->GetAddress()+this->GetType();
+    return Data;
+}
 
 inline FileNode::FileNode(short inode, int size, int address, char type, std::string Fdata) : InodeNum(inode), FSize(size), Address(address), FType(type), data(Fdata)
 {
