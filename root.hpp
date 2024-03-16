@@ -12,11 +12,30 @@ class ROOT
     ROOT();
     static std::string returnTextByNumber(int);
     static void writeToFile(std::string);
+    static int returnNumberByText(std::string);
 };
 
 inline ROOT::ROOT()
 {
 
+}
+
+inline int ROOT::returnNumberByText(std::string FName)
+{
+    std::ifstream File("rootFile");
+    std::string line;
+    if(File.is_open())
+    {
+        while(File)
+        {
+            std::getline(File, line);
+            if(FName.compare(line.substr(line.find(' ')+1))==0)
+            {
+                return std::stoi(line.substr(0,line.find(' ')));
+            }
+        }
+    }
+    return 0;
 }
 
 inline std::string ROOT::returnTextByNumber(int Inode)
@@ -28,7 +47,7 @@ inline std::string ROOT::returnTextByNumber(int Inode)
         while(File)
         {
             std::getline(File, line);
-            if(std::stoi(line.substr(0,2))==Inode)
+            if(std::stoi(line.substr(0,line.find(' ')))==Inode)
             {
                 return line;
             }

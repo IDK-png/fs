@@ -5,7 +5,7 @@
 #include <iostream>
 #include <math.h>
 #include <sstream>
-
+#define TABLE_SIZE 2000
 const char *MyFs::MYFS_MAGIC = "MYFS";
 
 MyFs::MyFs(BlockDeviceSimulator *blkdevsim_):blkdevsim(blkdevsim_) {
@@ -35,7 +35,7 @@ void MyFs::format() {
 int MyFs::findEmptyTableAddress()
 {
 	int i=0;
-	while(i<1024)
+	while(i<TABLE_SIZE)
 	{
 		char y[21] = {0};
 		blkdevsim->read(i,20,y);
@@ -49,7 +49,7 @@ int MyFs::findEmptyTableAddress()
 		i+=20;
 	}
 
-	if(i>=1024)
+	if(i>=TABLE_SIZE)
 	{
 		return -1;
 	}
@@ -59,8 +59,8 @@ int MyFs::findEmptyTableAddress()
 
 int MyFs::findEmptyDataAddress(int size)
 {
-	int i=1024;
-	while(i<3000)
+	int i=TABLE_SIZE;
+	while(i<TABLE_SIZE*2)
 	{
 		char y[size+1] = {0};
 		blkdevsim->read(i,size,y);
@@ -95,12 +95,25 @@ void MyFs::create_file(std::string path_str, bool directory) {
 	//blkdevsim->write(EmptyDataAddress,0,""); 
 	blkdevsim->write(EmptyAddress,20,Data.c_str());
 	root.writeToFile(std::to_string(std::stoi(Inode.GetInode())) + " " + path_str);
-	std::cout << root.returnTextByNumber(round(EmptyAddress/20)) << std::endl;
+	//std::cout << root.returnTextByNumber(round(EmptyAddress/20)) << std::endl;
+	//std::cout << root.returnNumberByText(path_str) << std::endl;
 }
 
 std::string MyFs::get_content(std::string path_str) {
-	throw std::runtime_error("not implemented");
-	return "";
+	ROOT root = ROOT();
+	int InodeNumber = root.returnNumberByText(path_str);
+	if(InodeNumber!=0)
+	{
+		char Inode[21];
+		blkdevsim->read(20*InodeNumber,20, Inode);
+
+		FileNode Node(Inode);
+		char Data[std::stoi(Node.GetFsize())+1]={0};
+		blkdevsim->read(std::stoi(Node.GetAddress()),std::stoi(Node.GetFsize()),Data);
+
+		return Data;
+	}
+	return "No File Found!";
 }
 
 void MyFs::set_content(std::string path_str, std::string content) {

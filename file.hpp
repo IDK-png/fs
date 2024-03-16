@@ -6,6 +6,7 @@
 #include <ctime>
 #include <chrono>
 #include <string>
+#include <cstring>
 
 class FileNode 
 {
@@ -43,6 +44,15 @@ inline FileNode::FileNode(short inode, int size, int address, char type, std::st
 
     //std::cout << sizeof(InodeNum) + sizeof(FSize) + sizeof(Date_Time) + sizeof(Address) + sizeof(FType) << std::endl;
     //std::cout << Date_Time << std::endl;
+}
+
+inline FileNode::FileNode(std::string inodeString)
+{
+    InodeNum=std::stoi(inodeString.substr(0,2));
+    FSize=std::stoi(inodeString.substr(2,4));
+    strcpy(Date_Time, inodeString.substr(6,8).c_str());
+    Address = std::stoi(inodeString.substr(14,4));
+    FType = inodeString[19];
 }
 
 inline std::string FileNode::GetInode()
