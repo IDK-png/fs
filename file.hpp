@@ -36,22 +36,26 @@ private:              // Docs                      | Example                 | S
     std::string data; // Data of the file          | any text                | depends             
 };
 
+// Address setter
 inline void FileNode::SetAddress(int newAddress)
 {
     Address = newAddress;
 }
 
+// File size(FSize) setter
 inline void FileNode::SetFSize(int newSize)
 {
     FSize = newSize;
 }
 
+// Get string in format: Inode number|File size|Date file created|Address of data|Type of Inode
 inline std::string FileNode::GetInodeSection()
 {
     std::string Data = this->GetInode()+this->GetFsize()+this->GetDate()+this->GetAddress()+this->GetType();
     return Data;
 }
 
+// Constructor && generates date for Date_Time variable
 inline FileNode::FileNode(short inode, int size, int address, char type, std::string Fdata) : InodeNum(inode), FSize(size), Address(address), FType(type), data(Fdata)
 {
     auto now = std::chrono::system_clock::now();
@@ -65,6 +69,7 @@ inline FileNode::FileNode(short inode, int size, int address, char type, std::st
     //std::cout << Date_Time << std::endl;
 }
 
+// Constructs a FileNode object from a inode string
 inline FileNode::FileNode(std::string inodeString)
 {
     InodeNum=std::stoi(inodeString.substr(0,2));
@@ -74,6 +79,7 @@ inline FileNode::FileNode(std::string inodeString)
     FType = inodeString[19];
 }
 
+// Returns the inode number as a formatted string
 inline std::string FileNode::GetInode()
 {
     std::string empty = "00";
@@ -86,6 +92,7 @@ inline std::string FileNode::GetInode()
     return empty;
 }
 
+// Returns the file size as a formatted string.
 inline std::string FileNode::GetFsize()
 {
     std::string empty = "0000";
@@ -98,21 +105,25 @@ inline std::string FileNode::GetFsize()
     return empty;
 }
 
+// Date_Time getter
 inline std::string FileNode::GetDate()
 {
     return Date_Time;
 }
 
+// Address getter
 inline std::string FileNode::GetAddress()
 {
     return std::to_string(Address);
 }
 
+// data varaible getter
 inline std::string FileNode::GetData()
 {
     return data;
 }
 
+// FType getter
 inline char FileNode::GetType()
 {
     return FType;

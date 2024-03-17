@@ -20,6 +20,7 @@ inline ROOT::ROOT()
 
 }
 
+// This function searches for a given text (FName) in root file and returns the number associated with the given text.
 inline int ROOT::returnNumberByText(std::string FName)
 {
     std::ifstream File("rootFile");
@@ -38,6 +39,7 @@ inline int ROOT::returnNumberByText(std::string FName)
     return 0;
 }
 
+// Returns the text associated with a given number from root file.
 inline std::string ROOT::returnTextByNumber(int Inode)
 {
     std::ifstream File("rootFile");
@@ -56,6 +58,7 @@ inline std::string ROOT::returnTextByNumber(int Inode)
     return "";
 }
 
+// Appends data to a root file
 inline void ROOT::writeToFile(std::string Data)
 {
     std::ofstream File("rootFile", std::ios::app);
